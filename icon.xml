@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Launcher-Icon fuer den Latein-Trainer: eine Schriftrolle (volumen) mit
+     zwei Terrakotta-Rollen und drei Textzeilen auf dem Pergament.
+     108x108, das Motiv bleibt innerhalb von Radius 31 um die Mitte (54,54),
+     damit die runde Launcher-Maske nichts abschneidet (die aeussersten
+     Punkte der Rollen liegen bei genau 30). Bewusst ein anderes Motiv und
+     eine andere Farbfamilie als beim gruenen Vokabeltrainer nebenan - die
+     beiden liegen auf demselben Homescreen. Das Pergament ist eigenstaendig
+     eingefaerbt und nicht hintergrundfarben, damit es auch bei einer anderen
+     IconBackground-Farbe erkennbar bleibt. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Pergamentblatt zwischen den Rollen -->
+    <path android:fillColor="#F6F2E7"
+        android:pathData="M39,40 h30 a3,3 0 0 1 3,3 v22 a3,3 0 0 1 -3,3 h-30 a3,3 0 0 1 -3,-3 v-22 a3,3 0 0 1 3,-3 z" />
+
+    <!-- drei Zeilen Text, die dritte kuerzer wie am Absatzende -->
+    <path android:fillColor="#8A5A3B" android:pathData="M42,47 h24 v3 h-24 z" />
+    <path android:fillColor="#8A5A3B" android:pathData="M42,54 h24 v3 h-24 z" />
+    <path android:fillColor="#8A5A3B" android:pathData="M42,61 h15 v3 h-15 z" />
+
+    <!-- linke Rolle -->
+    <path android:fillColor="#A63A28"
+        android:pathData="M35,36 a5,5 0 0 1 5,5 v26 a5,5 0 0 1 -10,0 v-26 a5,5 0 0 1 5,-5 z" />
+
+    <!-- rechte Rolle, etwas heller - das gibt der Rolle Tiefe -->
+    <path android:fillColor="#C25A33"
+        android:pathData="M73,36 a5,5 0 0 1 5,5 v26 a5,5 0 0 1 -10,0 v-26 a5,5 0 0 1 5,-5 z" />
+</vector>
