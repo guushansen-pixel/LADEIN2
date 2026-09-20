@@ -914,9 +914,9 @@ rex - König"></textarea>
       if (!band) {
         html += '<div class="card" style="padding:18px">' +
           '<b>Für ' + esc(meta ? meta.label : settings.band) + ' liegen noch keine Vokabeln bereit.</b>' +
-          '<div class="small muted" style="margin-top:8px">Der Wortschatz stammt aus dem ' +
-          'eigenen Schulbuch und ist bewusst nicht Teil des Repos. Erzeugen mit ' +
-          '<code>tools\\inspect-scans.ps1</code> und <code>tools\\build-vocab.ps1</code>.</div></div>';
+          '<div class="small muted" style="margin-top:8px">Der Wortschatz ist bewusst nicht ' +
+          'Teil des Repos. Erzeugen: die Lektionsseiten einlesen (Rezept in der README), ' +
+          'dann <code>tools\\build-vocab.ps1</code>.</div></div>';
         if (window.VOCAB_DEMO) {
           var dw = wordsOfUnit('demo', window.VOCAB_DEMO.units[0]);
           var ds = deckStats(dw);
@@ -1196,7 +1196,7 @@ rex - König"></textarea>
   // der Green-Line-Trainer nach Abschnitt ("Check-in", "Station 1") filtert,
   // filtert dieser hier nach Wortart. "Heute nur die Verben" ist die
   // Hausaufgabe, die es bei Latein tatsaechlich gibt.
-  var POS_ORDER = ['n', 'v', 'adj', 'adv', 'pron', 'praep', 'konj', 'num', 'name'];
+  var POS_ORDER = ['n', 'v', 'adj', 'adv', 'pron', 'praep', 'konj', 'num', 'wend', 'name'];
   function availablePos() {
     var seen = {}, out = [];
     for (var i = 0; i < deckCtx.words.length; i++) {

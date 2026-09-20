@@ -54,7 +54,7 @@ window.VOCAB_INDEX = {
         { title: 'Griechische Philosophie in Rom', from: 41, to: 45, emoji: '🤔' },
         { title: 'Die frühe Kaiserzeit',      from: 46, to: 50, emoji: '🏛️' },
         { title: 'Rom und die Christen',           from: 51, to: 55, emoji: '✝️' },
-        { title: 'Vom Ende des römischen Reiches bis in die Gegenwart', from: 56, to: 60, emoji: '📜' }
+        { title: 'Vom Ende des römischen Reiches bis in die Gegenwart', from: 56, to: 60, emoji: '⏳' }
       ],
       lessons: {
         L41: { kultur: 'Wer erklärt die Welt am besten?', text: 'Womit befasst sich ein Philosoph?' },
@@ -81,12 +81,13 @@ window.VOCAB_INDEX = {
     }
   ],
 
-  // Wortarten, wie sie der Konverter aus der Buchliste uebernimmt. Sie sind
-  // eine echte Angabe aus dem Buch, keine Heuristik - buildOptions() zieht
-  // damit Ablenker derselben Wortart.
+  // Wortarten. LateinLex nennt sie nicht, der Konverter leitet sie aus der
+  // Form ab (Stammformen -> Verb, Genusangabe -> Nomen, 'Adv.' -> Adverb,
+  // mehrteilig -> Wendung; Regeln siehe README). Trifft 97 %, der Rest ist 'x'.
+  // buildOptions() zieht damit Ablenker derselben Wortart.
   posLabels: {
     n: 'Nomen', v: 'Verb', adj: 'Adjektiv', adv: 'Adverb',
     pron: 'Pronomen', praep: 'Präposition', konj: 'Konjunktion',
-    num: 'Zahlwort', name: 'Eigenname', x: 'sonstiges'
+    num: 'Zahlwort', wend: 'Wendung', name: 'Eigenname', x: 'sonstiges'
   }
 };

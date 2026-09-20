@@ -17,10 +17,40 @@ beim Englisch-Trainer".
 
 ## Woher die Vokabeln kommen
 
+Der Wortschatz stammt aus dem Vokabular **„AGITEplus"** auf
+**[LateinLex](https://lateinlex.de)**, einer frei zugänglichen Lateinplattform
+(Wörterbuch nach Georges, Textbibliothek, Vokabeltrainer; betrieben von
+Nikolaus Deiser, München). Dort liegt der Lernwortschatz **lektionsweise von
+Lektion 1 bis 60**, also für alle drei Bände von Agite plus:
+
+| | |
+| --- | --- |
+| Einstieg | `lateinlex.de/?call=Voc&permalink=Tre17` |
+| eine Lektion | `?call=Voc&permalink=Tre17-<n−1>` (Lektion 21 = `Tre17-20`) |
+| Inhalt je Eintrag | Lemma mit Längenzeichen, Stammformen bzw. Genitiv und Genus, mehrere deutsche Bedeutungen, Konstruktionsangaben (`m. Dat.`, `ad m. Akk.`) |
+| Umfang hier | **948 Vokabeln** – 509 in Band 2 (L21–40), 439 in Band 3 (L41–60) |
+
+Zwei Gegenproben, dass das wirklich der Agite-plus-Wortschatz ist und nicht
+irgendeine Latein-Liste: die Lektionsinhalte passen thematisch aufs Buch
+(Lektion 21 „Der Raub der Europa" bringt *taurus*, *fōrma*, *virgō*, *mūtāre*),
+und die Wortzahlen stimmen mit unabhängigen Quellen überein – Lektion 22 hat
+hier wie in den öffentlichen Quizlet-Sets 19 Einträge, Lektion 23 in beiden 21.
+phase-6 gibt für Band 2 532 und für Band 3 458 Wortpaare an; unsere 509 bzw.
+439 liegen bei 96 %, die Differenz sind vermutlich zusätzlich gezählte
+Junkturen.
+
+`robots.txt` von lateinlex.de sperrt gezielt Lexikon- und Textseiten, die
+Vokabelseiten (`?call=Voc`) ausdrücklich nicht. Die Seiten wurden einmalig und
+nacheinander abgerufen. **Rechtlich ändert das nichts:** die Wortauswahl ist
+die des Lehrwerks, privat lernen ist unproblematisch, weitergeben nicht.
+Deshalb bleiben `vocab-src/` und `web/data/vocab.agp*.js` in `.gitignore`.
+
+### Warum nicht direkt vom Verlag
+
 Beim Green-Line-Trainer war das einfach: Klett stellt den Lernwortschatz aller
 Bände als kostenlose PDFs bereit – ursprünglich als Hilfe für ukrainische
-Geflüchtete. **Für AGITE plus gibt es nichts Vergleichbares.** Gesucht und
-ausgeschlossen wurde:
+Geflüchtete. **Für AGITE plus gibt es nichts Vergleichbares.** In drei
+Durchgängen gesucht und ausgeschlossen:
 
 | Quelle | Befund |
 | --- | --- |
@@ -38,16 +68,16 @@ ausgeschlossen wurde:
 | docplayer, yumpu, studocu, scribd | nichts |
 | Google Books, ISBN 9783140104500 | nur der bibliografische Eintrag, **keine Leseprobe** |
 | eduki, lehrermarktplatz, Westermann-Mediencode | nichts |
+| Wayback Machine: Westermanns kompletter Anlagen-Index (35.679 URLs) und der Dateinamen-Index des Downloadservers `c.wgr.de` (182.636 URLs) | **null** Treffer für Vokabel-/Wortschatzdateien zu Agite – der Verlag hat nie eine ausgeliefert |
+| archive.org, DNB, HathiTrust, Google Books, Buchhändler-Leseproben | nur Inhaltsverzeichnisse; die einzige echte Vokabelseite im Netz ist Lektion **10** im Werbeprospekt zu Band 1 |
 
-Der Wortschatz kommt deshalb aus dem **eigenen Schulbuch**. Am wenigsten
-Arbeit macht das **Vokabelheft (ISBN 978-3-14-010450-0)**: es deckt laut
-Westermann „6. Schuljahr bis 8. Schuljahr" ab, also alle drei Bände in einem
-Heft – ein Scanvorgang für Band 2 *und* 3. Alternativ der Teil „Grammatik und
-Vokabeln" im jeweiligen Schulbuch. Rechtlich ist das dieselbe Lage wie beim
-Green-Line-Trainer – privat damit zu lernen ist unproblematisch, die Liste
-weiterzugeben nicht. Deshalb stehen `source-scans/`, `vocab-src/` und
-`web/data/vocab.agp*.js` in `.gitignore`. Im Repo liegen nur Code, die
-Skripte, die Strukturdaten und eine eigene Demo-Liste.
+Im Repo liegen deshalb nur Code, die Skripte, die Strukturdaten und eine
+eigene Demo-Liste.
+
+Falls LateinLex einmal verschwindet, bleibt der Weg über das **eigene Buch**:
+das Vokabelheft (ISBN 978-3-14-010450-0) deckt laut Westermann „6. Schuljahr
+bis 8. Schuljahr" ab, also alle drei Bände in einem Heft. Dafür ist
+`tools/inspect-scans.ps1` da.
 
 Frei verwertbar ist immerhin die **Struktur**: die
 Inhaltsverzeichnis-PDFs von westermann.de liefern alle Lektionsnummern, die
@@ -57,24 +87,36 @@ lateinischen Titeln (*Hōc sīgnō vincēs!*, *Cicerōniānus es, nōn Chrīsti�
 
 ### Wie die Extraktion funktioniert
 
-Drei Stufen, damit nichts still Erfundenes in die App gerät:
+Zwei Stufen, damit nichts still Erfundenes in die App gerät:
 
 ```powershell
-.\tools\inspect-scans.ps1         # 1. was liegt da, und hat es eine Textebene?
-# 2. daraus vocab-src\agp<N>.tsv schreiben und gegenlesen
-.\tools\build-vocab.ps1 -Band 2   # 3. TSV -> web\data\vocab.agp2.js
+# 1. Lektionsseiten von lateinlex.de lesen -> vocab-src\agp<N>.tsv (siehe unten)
+.\tools\build-vocab.ps1 -Band 2   # 2. TSV -> web\data\vocab.agp2.js
 ```
 
-**1. Was für ein Scan ist das?** `inspect-scans.ps1` zählt, was in
-`source-scans/agp<N>/` liegt, und prüft bei PDFs mit `pdftotext`, ob eine
-Textebene vorhanden ist. Bringt die Datei Text mit, ist die Arbeit erledigt –
-`pdftotext` liefert die Wörter exakt. Sind es nur Pixel, müssen die Seiten
-gelesen werden; auf diesem Rechner gibt es weder Tesseract noch einen
-PDF-Rasterizer (Git für Windows bringt nur `pdftotext` mit).
+**1. Die Lektionsseiten lesen.** LateinLex rendert seine Seiten per
+JavaScript, `pdftotext` oder ein simpler HTTP-Abruf helfen also nicht –
+gelesen wird im Browser. Der Aufbau ist sauber und stabil: `tr.selectable` ist
+je ein Eintrag, `p.Fh` die Kopfform (darin `span.Fstamm` das Lemma), `p.Fs`
+die Stammformen, `span.Ft` je eine Bedeutung, `span.Fann1` eine
+Konstruktionsangabe. Die Eselsbrücken-Sätze hängen in `div.wordimage` und
+fallen damit von selbst weg.
+
+Drei Dinge werden beim Lesen begradigt, und sie sind der Grund, warum das
+nicht einfach ein Copy-Paste ist:
+
+- `das Wohl(ergehen)` wird zu **beiden** Varianten aufgefächert. Sonst zählt
+  getipptes „Wohlergehen" als falsch, weil `normalize()` Klammerzusätze wegwirft.
+- Eine Konstruktionsangabe, die im Bedeutungstext schon steht, wird nicht
+  zusätzlich davorgesetzt – sonst steht *Cicero* zweimal mit seinen Lebensdaten da.
+- Die **Wortart ist abgeleitet**, nicht aus der Quelle übernommen: Stammformen
+  vorhanden → Verb, Genusangabe (`m`, `f`, `n`, `m/f`, auch mit `Pl.`) → Nomen,
+  `Adv.`/`Präp.`/`Subj.`/`Konj.` in der Formenspalte → entsprechend,
+  mehrteiliger Eintrag → Wendung, deutsche Zahlwörter → Zahlwort, sonst
+  Adjektiv. Das trifft 97 % (29 von 948 bleiben „sonstiges").
 
 **2. Das TSV in der Mitte** ist kein Umweg. Es ist die Fassung, die sich Zeile
-für Zeile gegen das Buch gegenlesen lässt – eine generierte `.js` liest
-niemand nach:
+für Zeile gegenlesen lässt – eine generierte `.js` liest niemand nach:
 
 ```
 L21	ducere	duco, duxi, ductum	v	führen; ziehen; leiten
@@ -82,13 +124,19 @@ L21	pax	pacis f.	n	Friede
 L22	semper		adv	immer
 ```
 
-**3. Der Konverter prüft und bricht ab**, statt stillschweigend etwas
+**Der Konverter prüft und bricht ab**, statt stillschweigend etwas
 Halbfertiges zu erzeugen: bei unbekannter Wortart, bei einer Lektion außerhalb
 des Bandes (Band 2 = L21–L40), bei fehlenden Spalten, leerem Lemma oder leerer
 Bedeutung und bei einem Lemma, das in derselben Lektion zweimal vorkommt –
 dann wären die Wortschlüssel in localStorage nicht eindeutig und der zweite
 Eintrag würde den Lernstand des ersten mitbenutzen. Am Ende steht die Anzahl
-je Lektion: die Gegenprobe zum Buch.
+je Lektion als Gegenprobe.
+
+Genau diese Doppelungssperre ist dreimal angeschlagen: `quīdam` (L41),
+`Athēniēnsis` (L42) und `quisque` (L49) stehen in der Quelle zweimal in
+derselben Lektion, einmal adjektivisch und einmal substantivisch. Sie sind im
+TSV zu je einem Eintrag zusammengefasst, mit beiden Formen und beiden
+Bedeutungen – deshalb 439 statt 442 Vokabeln in Band 3.
 
 ## Datenmodell
 
@@ -169,8 +217,9 @@ werden **unterschiedlich streng** behandelt.
      Lateinischen echte Wortunterschiede einebnen – aus `puella` würde `pulla`.
 3. **Alle Varianten prüfen:** jede Übersetzung aus `de`, und bei Einzelwörtern
    zusätzlich jeder Teil einer Aufzählung. Bei DE → LA zählt auch die volle
-   Buchschreibweise mit Stammformen (`ducere, duco, duxi, ductum`) – und über
-   die Aufzählungsregel damit jede einzelne Stammform.
+   Schreibweise mit Stammformen (`prōvidēre, prōvideō prōvīdī prōvīsum`) als
+   richtig. Eine *einzelne* Stammform dagegen nicht: auf „sorgen für" ist
+   `prōvīsum` das PPP und nicht die gesuchte Vokabel.
 4. **Tippfehler:** Levenshtein-Distanz ≤ 1 bzw. ≤ 2 → „Fast! Achte auf die
    Schreibweise" mit der richtigen Lösung. Zählt als richtig, befördert die
    Vokabel aber **nicht** in die nächste Box. Die Untergrenze ist im Deutschen
@@ -280,31 +329,41 @@ Im Browser über `http://localhost:8100` (Chromium):
 
 - **Prüflogik:** 27 Fälle über `?test=1`, alle grün – Groß/Klein, deutsche
   Artikel, Umlaut-Umschreibungen, `ß`/`ss`, Längenzeichen in beide Richtungen,
-  `u`/`v`, `i`/`j`, Stammformen-Eingabe und einzelne Stammform,
-  Mehrfach-Bedeutungen, ganze Sätze, die Tippfehler-Grenzen beider Richtungen
-  und die vier Paare, an denen die lateinische Faltung *nicht* einebnen darf
-  (`aequus`/`equus`, `caelum`/`celum`, `puella`/`pulla`, `amat`/`amas`)
-- **Konverter:** läuft gegen Testzeilen durch, zählt je Lektion korrekt aus,
-  escapet `'` und `\` im Generat und bricht bei einer Zeile mit fehlendem
-  Tabulator mit Zeilennummer ab
+  `u`/`v`, `i`/`j`, Stammformen-Eingabe, Mehrfach-Bedeutungen, ganze Sätze,
+  die Tippfehler-Grenzen beider Richtungen und die vier Paare, an denen die
+  lateinische Faltung *nicht* einebnen darf (`aequus`/`equus`,
+  `caelum`/`celum`, `puella`/`pulla`, `amat`/`amas`)
+- **Prüflogik an echten Einträgen:** 11 Fälle aus Band 2 – `providere` ohne
+  Längenzeichen, `prōvidēre` mit voller Stammformenkette, `uirgo` für `virgō`,
+  `justitia` für `iūstitia`, alle vier Bedeutungen von `salūs` inklusive der
+  Klammervariante *Wohl(ergehen)*, `sorgen für` trotz vorangestellter
+  Konstruktionsangabe; `flōs` gegen `fluctus` bleibt falsch
+- **Konverter:** beide Bände laufen ohne Beanstandung durch (509 + 439 in je
+  20 Lektionen), escapet `'` und `\` im Generat, bricht bei einer Zeile mit
+  fehlendem Tabulator mit Zeilennummer ab und hat die drei doppelten Lemmata
+  in Band 3 tatsächlich gemeldet
+- **Wortzahlen gegengeprüft:** L22 = 19 und L23 = 21 stimmen mit unabhängigen
+  öffentlichen Quizlet-Sets überein; die Bandsummen liegen bei 96 % der
+  phase-6-Angaben
+- **Ablenker auf echten Lektionsdaten**, je 350 gezogene Fragen in L21, L33,
+  L40, L47 und L55 in beiden Richtungen: immer vier Optionen, **null**
+  Dubletten, **95–100 %** der Fragen haben mindestens zwei Ablenker, die in
+  Schreibweise oder Thema nahe liegen, bei **53–68 %** alle drei. In 7–18 %
+  sticht die richtige Antwort durch ihre Länge heraus. Zum Vergleich der
+  Green-Line-Trainer: 96–100 % bzw. 38–62 %, Längenausreißer 2–12 %
 - **Stammformen-Zeile:** bei DE → LA vor der Antwort versteckt, danach
   sichtbar (über 14 Vokabeln durchgespielt); bei LA → DE sofort sichtbar
-- **Ablenker:** 200 Ziehungen über die Demo-Liste – immer vier Optionen, keine
-  Dubletten
 - **Wortart-Filter:** *Verb* wählt in der Demo-Liste genau die 5 Verben
 - **Startseite:** Kapitel als Zwischentitel mit Lektionsbereich, Lektionskarten
   mit Titel aus dem Inhaltsverzeichnis; Übungs-Bildschirm zeigt zusätzlich das
   Kulturthema
 - Helles und dunkles Theme, kein horizontales Scrollen auf 375 px
 
-**Noch offen** – dafür fehlen die Buchdaten bzw. ein Gerät:
+**Noch offen** – dafür braucht es ein Gerät:
 
-- Die Ablenkerqualität über je 300–400 gezogene Fragen in mehreren echten
-  Lektionen und beiden Richtungen messen (Anteil naher Ablenker,
-  Längenausreißer) und mit den Green-Line-Zahlen vergleichen
-- Kompletter Übungsdurchlauf auf echten Lektionsdaten, Tastatur-Ablauf mit
-  echten Tastendrücken, Eingrenzung „Nr. 5 bis 24", Reload-Festigkeit von
-  Fortschritt und Serie
+- Kompletter Übungsdurchlauf auf einer echten Lektion mit echten
+  Tastendrücken, Eingrenzung „Nr. 5 bis 24", Reload-Festigkeit von Fortschritt
+  und Serie
 - **Am Gerät** (Pixel 11 Pro): Zurück-Wischgeste während einer Übung,
   Bildschirmtastatur vs. Eingabefeld, Portrait-Lock, Keep-Screen-On,
   WebView-Force-Dark

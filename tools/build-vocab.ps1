@@ -20,7 +20,7 @@
       Lemma        die Vokabel, wie sie abgefragt wird
       Stammformen  Rest des Buch-Eintrags (Stammformen bzw. Genitiv + Genus),
                    darf leer sein
-      Wortart      n v adj adv pron praep konj num name x
+      Wortart      n v adj adv pron praep konj num wend (Wendung) name x
       Bedeutungen  mit ; getrennt; jede zaehlt beim Eintippen als richtig
 
     Zeilen, die mit # anfangen, und Leerzeilen werden ueberlesen.
@@ -49,7 +49,7 @@ $srcDir = Join-Path $root 'vocab-src'
 $outDir = Join-Path $root 'web\data'
 
 $Utf8NoBom = New-Object System.Text.UTF8Encoding($false)
-$validPos  = @('n', 'v', 'adj', 'adv', 'pron', 'praep', 'konj', 'num', 'name', 'x')
+$validPos  = @('n', 'v', 'adj', 'adv', 'pron', 'praep', 'konj', 'num', 'wend', 'name', 'x')
 
 # Band 1 = Lektion 1-20, Band 2 = 21-40, Band 3 = 41-60.
 function Get-LessonRange([int]$n) {

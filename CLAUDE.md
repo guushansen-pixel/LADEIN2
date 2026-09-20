@@ -16,28 +16,42 @@ an der Lernlogik aendert, schaut dort nach, ob es dieselbe Stelle auch gibt.
 `web/data/vocab.agp*.js`, `vocab-src/` und `source-scans/` sind **gitignored**
 und in einem frischen Klon nicht vorhanden.
 
-**Anders als bei Green Line gibt es keine freie Netzquelle.** Klett stellt den
-Lernwortschatz seiner Englisch-, Franzoesisch- und Spanischlehrwerke kostenlos
-bereit (urspruenglich fuer ukrainische Gefluechtete) - fuer Latein gibt es das
-nicht, und Agite plus ist ohnehin Westermann. Westermanns eigenes
-Gefluechteten-Programm deckt nur *Camden Market* und *Notting Hill Gate* ab.
-Frei herunterladbar sind von westermann.de nur die **Inhaltsverzeichnisse**;
-daraus stammen die Lektions- und Kapiteltitel in `web/data/index.js`. Der
-Wortschatz selbst kommt aus dem **eigenen Buch**. Wer das noch einmal
-nachrecherchieren will: die vollstaendige Liste des Geprueften steht in der
-README unter "Woher die Vokabeln kommen" - nicht neu suchen, es war schon
-gruendlich.
+Quelle ist das Vokabular **"AGITEplus" auf [lateinlex.de](https://lateinlex.de)**
+(Lektion 1-60 vollstaendig, mit Laengenzeichen, Stammformen, Genus und
+Konstruktionsangaben). Einstieg `?call=Voc&permalink=Tre17`, eine Lektion
+`?call=Voc&permalink=Tre17-<n-1>`. Die Seiten rendern per JavaScript -
+`get_page_text` liefert nichts, `javascript_tool` mit dem DOM schon. Die
+Struktur je Eintrag steht in der README unter "Wie die Extraktion
+funktioniert"; `robots.txt` erlaubt `?call=Voc` ausdruecklich.
+
+**Nicht neu suchen.** Ob es eine Verlagsquelle gibt, wurde in drei Durchgaengen
+geklaert, bis hinunter zum kompletten Wayback-Index von westermann.de
+(35.679 Anlagen-URLs) und des Downloadservers c.wgr.de (182.636 URLs):
+Westermann hat nie eine oeffentliche Vokabeldatei ausgeliefert. Frei sind nur
+die **Inhaltsverzeichnisse**, daher stammen die Lektions- und Kapiteltitel in
+`web/data/index.js`. Die vollstaendige Liste des Geprueften steht in der README.
 
 Neu erzeugen:
 
 ```powershell
-.\tools\inspect-scans.ps1     # was liegt in source-scans\, hat es eine Textebene?
-# -> daraus vocab-src\agp<N>.tsv schreiben und gegenlesen
-.\tools\build-vocab.ps1 -Band 2   # TSV -> web\data\vocab.agp2.js
+# 1. Lektionsseiten im Browser lesen -> vocab-src\agp<N>.tsv (Rezept in der README)
+.\tools\build-vocab.ps1 -Band 2   # 2. TSV -> web\data\vocab.agp2.js
 ```
 
 Das TSV dazwischen ist kein Umweg, sondern der Punkt, an dem sich die Daten
-gegen das Buch gegenlesen lassen. Eine generierte `.js` liest niemand nach.
+Zeile fuer Zeile gegenlesen lassen. Eine generierte `.js` liest niemand nach.
+
+`tools/inspect-scans.ps1` ist der Rueckfallweg, falls LateinLex verschwindet:
+Wortschatz aus dem eigenen Vokabelheft (ISBN 978-3-14-010450-0, deckt Klasse
+6-8 ab) einscannen. Das Skript sagt nur, ob ein Scan eine Textebene mitbringt
+oder gelesen werden muss - auf diesem Rechner gibt es weder Tesseract noch
+einen PDF-Rasterizer, Git fuer Windows bringt nur `pdftotext` mit.
+
+**Die Wortart ist abgeleitet, nicht aus der Quelle uebernommen** - LateinLex
+nennt sie nicht. Die Regeln stehen in der README; sie treffen 97 %, 29 von 948
+Eintraegen bleiben `x`. Das ist der einzige Punkt, an dem die Daten nicht
+woertlich der Quelle folgen, und der Kommentar in `web/data/index.js` sagt das
+inzwischen auch.
 
 ## Build & Test
 
@@ -114,12 +128,16 @@ Eingabefeld verdeckt, Portrait-Lock, Keep-Screen-On, WebView-Force-Dark.
 - Beim Erweitern der Antwortpruefung immer erst die Fallliste in der Konsole
   (`?test=1`) erweitern, dann den Code - die Pruefung ist das Stueck, an dem
   die App steht oder faellt.
-- `word.pos` ist eine **Angabe aus dem Buch**, keine Heuristik. Deshalb wiegt
-  "gleiche Wortart" in Richtung DE -> LA schwerer als in der Gegenrichtung, wo
-  auf den Knoepfen deutsche Uebersetzungen stehen und wieder geraten werden
-  muss. Wer an den Gewichten in `buildOptions()` dreht, misst die Wirkung ueber
-  `?test=1` an mehreren hundert gezogenen Fragen nach, nicht an drei
-  Beispielen - einzelne Ziehungen sagen bei zufaelliger Auswahl nichts.
+- `word.pos` wird beim Einlesen aus der **Form** abgeleitet (Regeln in der
+  README), nicht geraten und nicht aus der Quelle uebernommen - LateinLex
+  nennt keine Wortart. In Richtung DE -> LA steht die lateinische Vokabel auf
+  den Knoepfen, dort ist `pos` verlaesslich und wiegt deshalb schwerer als in
+  der Gegenrichtung, wo deutsche Uebersetzungen dastehen und wieder geraten
+  werden muss. Wer an den Gewichten in `buildOptions()` dreht, misst die
+  Wirkung ueber `?test=1` an mehreren hundert gezogenen Fragen nach, nicht an
+  drei Beispielen - einzelne Ziehungen sagen bei zufaelliger Auswahl nichts.
+  Der Messstand: 95-100 % der Fragen mit mindestens zwei nahen Ablenkern,
+  53-68 % mit dreien (je 350 Ziehungen in L21/33/40/47/55, beide Richtungen).
 - `word.idx` (Platz in der Buchreihenfolge) ist kein Deko-Feld. Eine Lektion
   hat im Buch keine Unterabschnitte, also ist die Nachbarschaft in dieser
   Reihenfolge das **einzige** Themensignal fuer die Ablenker - beim Bauen
