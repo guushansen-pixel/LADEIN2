@@ -31,10 +31,19 @@ ausgeschlossen wurde:
 | Quizlet | Bruchstücke; Zugriff per Cloudflare gesperrt (HTTP 403), Scraping laut AGB untersagt |
 | [latin-is-simple.com](https://www.latin-is-simple.com/de/vocabulary/groupgroup/55/) | führt „Agite plus I" als Lehrwerk, darin aber **genau eine** Lektion (L12) |
 | Schul-Websites, `filetype:pdf` über DuckDuckGo und Bing | keine lektionsgeordnete Agite-Wortliste; nur Schulaufgaben-Übungsblätter |
+| LearningApps | eine einzige Agite-App, und die ist Grammatik („Konjunktiv Präsens – Agite II L33") |
+| AnkiWeb Shared Decks | **null** Treffer für „agite" |
+| karteikarte.com, repetico, knowunity, studysmarter | Cursus, Prima, Campus – Agite plus nicht |
+| GitHub (Repo-Suche + Code-Suche über grep.app) | nichts zu Agite plus |
+| docplayer, yumpu, studocu, scribd | nichts |
+| Google Books, ISBN 9783140104500 | nur der bibliografische Eintrag, **keine Leseprobe** |
+| eduki, lehrermarktplatz, Westermann-Mediencode | nichts |
 
-Der Wortschatz kommt deshalb aus dem **eigenen Schulbuch**: dem Teil
-„Grammatik und Vokabeln" bzw. dem separaten Vokabelheft
-(ISBN 978-3-14-010450-0). Rechtlich ist das dieselbe Lage wie beim
+Der Wortschatz kommt deshalb aus dem **eigenen Schulbuch**. Am wenigsten
+Arbeit macht das **Vokabelheft (ISBN 978-3-14-010450-0)**: es deckt laut
+Westermann „6. Schuljahr bis 8. Schuljahr" ab, also alle drei Bände in einem
+Heft – ein Scanvorgang für Band 2 *und* 3. Alternativ der Teil „Grammatik und
+Vokabeln" im jeweiligen Schulbuch. Rechtlich ist das dieselbe Lage wie beim
 Green-Line-Trainer – privat damit zu lernen ist unproblematisch, die Liste
 weiterzugeben nicht. Deshalb stehen `source-scans/`, `vocab-src/` und
 `web/data/vocab.agp*.js` in `.gitignore`. Im Repo liegen nur Code, die
