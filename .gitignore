@@ -1,8 +1,9 @@
 # Vokabeldaten aus AGITE plus (Westermann Bildungsmedien / Schoeningh).
-# Gescannt aus dem eigenen Buch - privat damit lernen ist ok, die Liste
-# weiterzugeben nicht. Deshalb bleiben Rohscans, das geprueftes Zwischen-TSV
+# Gelesen von lateinlex.de (Rezept in der README), Rueckfallweg sind Scans
+# aus dem eigenen Vokabelheft - privat damit lernen ist ok, die Liste
+# weiterzugeben nicht. Deshalb bleiben Rohscans, das gepruefte Zwischen-TSV
 # und das Generat aus dem Repo.
-# Neu erzeugen: tools\split-scans.ps1 und danach tools\build-vocab.ps1
+# Neu erzeugen: vocab-src\agp<N>.tsv (README) und danach tools\build-vocab.ps1
 source-scans/
 vocab-src/
 web/data/vocab.agp*.js

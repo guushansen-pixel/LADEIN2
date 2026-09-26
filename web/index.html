@@ -1524,8 +1524,9 @@ rex - König"></textarea>
 
       var score = similarity(t, right)
         + (w.kind === item.kind ? 2 : 0)
-        // Gleiche Wortart. In Richtung DE -> LA ist das die Buchangabe und
-        // damit verlaesslich, deshalb wiegt sie dort schwerer: ein Verb
+        // Gleiche Wortart. In Richtung DE -> LA ist das word.pos, beim
+        // Einlesen aus der lateinischen Form abgeleitet (Stammformen, Genus)
+        // und damit verlaesslich, deshalb wiegt sie dort schwerer: ein Verb
         // gegen drei Nomen faellt sonst sofort auf.
         + (cls && cls === rightClass ? (la2de ? 3 : 4) : 0)
         // Eine Lektion hat keine Abschnitte, an denen sich das Thema

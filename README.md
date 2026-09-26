@@ -159,7 +159,9 @@ window.VOCAB_AGP2 = {
   unter der Vokabel – bei **DE → LA erst nach der Antwort**, vorher wären sie
   die Lösung. Abgefragt werden sie nicht (siehe „Bewusst nicht drin").
 - `pos` ist die Wortart (`n`, `v`, `adj`, `adv`, `pron`, `praep`, `konj`,
-  `num`, `name`, `x`) – eine **Angabe aus dem Buch**, keine Heuristik.
+  `num`, `name`, `x`) – **aus der Form abgeleitet** (Regeln oben unter „Wie die
+  Extraktion funktioniert“), weil LateinLex keine Wortart nennt; 29 von 948
+  Einträgen bleiben `x`.
 - `de` ist immer eine **Liste** – mehrere gleichwertige Übersetzungen zählen
   bei der Selbsteingabe alle als richtig.
 - `kind`: `w` = Einzelwort/kurze Wendung, `p` = ganzer Satz. Der Schalter
@@ -188,7 +190,7 @@ verschiedenen**:
 
 | Signal | Punkte | warum |
 | --- | --- | --- |
-| Gleiche Wortart | +4 (DE→LA) / +3 (LA→DE) | bei DE→LA ist es die Buchangabe und damit verlässlich; ein Verb gegen drei Nomen fällt sofort auf |
+| Gleiche Wortart | +4 (DE→LA) / +3 (LA→DE) | bei DE→LA ist es die aus der lateinischen Form abgeleitete Wortart und damit verlässlich (LA→DE muss sie aus dem Deutschen raten); ein Verb gegen drei Nomen fällt sofort auf |
 | Nachbarschaft in der Buchreihenfolge (±8) | +4 | eine Lektion hat keine Abschnitte – was im Wortschatz nebeneinander steht, gehört zusammen |
 | Gleiche Art (Wort/Satz) | +2 | kein Einzelwort gegen einen ganzen Satz |
 | Schreib-Ähnlichkeit | 0–10 | Anfangsbuchstabe, Wortanfang, Wortende, Länge, Wortzahl |
@@ -359,11 +361,19 @@ Im Browser über `http://localhost:8100` (Chromium):
   Kulturthema
 - Helles und dunkles Theme, kein horizontales Scrollen auf 375 px
 
+- **Übungsdurchlauf mit echten Tastendrücken** (Playwright, Demo-Liste, 26.09.2026):
+  Eingrenzung „Nr. 5 bis 20" wählt 16 von 24, die Übung (DE → LA, Eintippen,
+  alle) fragt genau diese 16 ab, keine fehlt, keine zusätzlich; erster Enter
+  prüft, zweiter schaltet weiter. Eine absichtlich falsche Antwort landet in
+  der Auswertung (15 von 16). Nach einem Reload stehen Serie (1 Tag),
+  Fortschritt (16 Einträge) und Auswahl (16 von 24) noch da. Zurück aus der
+  Auswahl führt über `history.back()` zur Einstellung und dann zum Start,
+  keine JS-Fehler
+
 **Noch offen** – dafür braucht es ein Gerät:
 
-- Kompletter Übungsdurchlauf auf einer echten Lektion mit echten
-  Tastendrücken, Eingrenzung „Nr. 5 bis 24", Reload-Festigkeit von Fortschritt
-  und Serie
+- Derselbe Durchlauf einmal auf einer **echten** Lektion (die Banddaten sind
+  gitignored und lagen beim Browser-Test nicht vor)
 - **Am Gerät** (Pixel 11 Pro): Zurück-Wischgeste während einer Übung,
   Bildschirmtastatur vs. Eingabefeld, Portrait-Lock, Keep-Screen-On,
   WebView-Force-Dark
