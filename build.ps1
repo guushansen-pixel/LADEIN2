@@ -1,8 +1,7 @@
 <#
 .SYNOPSIS
     Baut den Latein-Trainer ueber apk-builder und patcht danach nach, was
-    apk-builder selbst nicht unterstuetzt: Portrait-Lock, Keep-Screen-On und
-    einen Predictive-Back-Handler fuer die Zurueck-Wischgeste.
+    apk-builder selbst nicht unterstuetzt: Portrait-Lock und Keep-Screen-On.
 .DESCRIPTION
     apps\Latein-Trainer unter apk-builder wird bei jedem Lauf per -Force
     komplett neu aus dem WebView-Template erzeugt (siehe apk-builder\CLAUDE.md) -
@@ -11,9 +10,10 @@
     apk-builder, bricht der Build laut ab statt still eine unfertige APK zu
     bauen.
 
-    Der Predictive-Back-Patch ist von Anfang an dabei: ohne ihn schliesst die
-    Kanten-Wischgeste bei hohem targetSdk die App, statt im WebView
-    zurueckzugehen (in breathe-well erst am Geraet aufgefallen).
+    Die Zurueck-Wischgeste (Predictive Back) patcht seit 2026-09-24 das
+    apk-builder-Template selbst nach (Commit "Template: Zurueck-Wischgeste
+    abfangen, -Portrait und -KeepScreenOn") - dieser Wrapper muss dafuer
+    nichts mehr tun.
 
     Anders als vokabeltrainer\build.ps1 fehlt hier alles zur Sprachausgabe -
     keine TtsBridge.java, kein <queries>-Block fuer TTS_SERVICE, kein
@@ -64,7 +64,7 @@ Write-Host ("  [info] {0} Vokabelpakete werden mitgebaut" -f $packs.Count) -Fore
 
 $javaDir = Join-Path $appDir ("app\src\main\java\" + $PackageId.Replace('.', '\'))
 
-# --- AndroidManifest.xml: Portrait-Lock + Predictive Back ----------------
+# --- AndroidManifest.xml: Portrait-Lock ------------------------------------
 $manifestPath = Join-Path $appDir 'app\src\main\AndroidManifest.xml'
 $manifest = Get-Content $manifestPath -Raw
 
@@ -76,17 +76,9 @@ if ($manifest -notmatch [regex]::Escape($launchModeNeedle)) {
 }
 $manifest = $manifest -replace [regex]::Escape($launchModeNeedle), ('android:launchMode="singleTop"' + "`n            android:screenOrientation=`"portrait`">")
 
-# Patch 2: Predictive Back explizit aktivieren - nur mit diesem Attribut
-# registriert Android den OnBackInvokedCallback aus Patch 4 zuverlaessig.
-$themeNeedle = 'android:theme="@style/AppTheme">'
-if ($manifest -notmatch [regex]::Escape($themeNeedle)) {
-    throw "Manifest-Patchziel (theme) nicht gefunden - hat sich das apk-builder-Template geaendert?"
-}
-$manifest = $manifest -replace [regex]::Escape($themeNeedle), ('android:theme="@style/AppTheme"' + "`n        android:enableOnBackInvokedCallback=`"true`">")
-
 Write-TextNoBom -Path $manifestPath -Content $manifest
 
-# --- MainActivity.java: Keep-Screen-On + Predictive Back -----------------
+# --- MainActivity.java: Keep-Screen-On -------------------------------------
 $mainActivityPath = Join-Path $javaDir 'MainActivity.java'
 $java = Get-Content $mainActivityPath -Raw
 
@@ -94,10 +86,9 @@ $importNeedle = 'import android.view.KeyEvent;'
 if ($java -notmatch [regex]::Escape($importNeedle)) {
     throw "MainActivity.java Import-Patchziel nicht gefunden - hat sich das apk-builder-Template geaendert?"
 }
-$newImports = "import android.view.WindowManager;`nimport android.window.OnBackInvokedDispatcher;"
-$java = $java -replace [regex]::Escape($importNeedle), ($importNeedle + "`n" + $newImports)
+$java = $java -replace [regex]::Escape($importNeedle), ($importNeedle + "`nimport android.view.WindowManager;")
 
-# Patch 3: Bildschirm wach halten - beim Nachdenken ueber eine Vokabel
+# Patch 2: Bildschirm wach halten - beim Nachdenken ueber eine Vokabel
 # passiert minutenlang keine Eingabe. FLAG_KEEP_SCREEN_ON braucht keine
 # Manifest-Permission (anders als WAKE_LOCK+PowerManager).
 $ccNeedle = 'setContentView(webView);'
@@ -106,21 +97,9 @@ if ($java -notmatch [regex]::Escape($ccNeedle)) {
 }
 $java = $java -replace [regex]::Escape($ccNeedle), ($ccNeedle + "`n`n        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);")
 
-# Patch 4: Zurueck-Wischgeste (Predictive Back). Bei targetSdk 33+ faengt
-# onKeyDown/KEYCODE_BACK (im Template bereits vorhanden) die moderne
-# Kanten-Wischgeste nicht mehr ab - ohne eigenen OnBackInvokedCallback
-# schliesst die Geste die App, statt im WebView zurueckzugehen und damit die
-# app-eigene history.pushState/popstate-Navigation auszuloesen.
-$keepScreenOnNeedle = 'getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);'
-if ($java -notmatch [regex]::Escape($keepScreenOnNeedle)) {
-    throw "MainActivity.java Predictive-Back-Patchziel nicht gefunden - Keep-Screen-On-Patch hat nicht wie erwartet gegriffen?"
-}
-$predictiveBackSnippet = $keepScreenOnNeedle + "`n`n        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {`n            getOnBackInvokedDispatcher().registerOnBackInvokedCallback(`n                    OnBackInvokedDispatcher.PRIORITY_DEFAULT,`n                    () -> {`n                        if (webView.canGoBack()) {`n                            webView.goBack();`n                        } else {`n                            finish();`n                        }`n                    });`n        }"
-$java = $java -replace [regex]::Escape($keepScreenOnNeedle), $predictiveBackSnippet
-
 Write-TextNoBom -Path $mainActivityPath -Content $java
 
-Write-Host "  [ok] Patches angewendet (Portrait-Lock, Keep-Screen-On, Predictive Back)" -ForegroundColor Green
+Write-Host "  [ok] Patches angewendet (Portrait-Lock, Keep-Screen-On)" -ForegroundColor Green
 
 if ($Release -and $Install) {
     & "$ApkBuilder\build-apk.ps1" -App $AppName -Release -Install

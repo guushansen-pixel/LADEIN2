@@ -74,10 +74,12 @@ und Ablenkerqualitaet lassen sich damit aus der Konsole ueber hunderte Faelle
 messen, statt sie durchzuklicken.
 
 APK bauen - **nicht** direkt `apk-builder\new-app.ps1`/`build-apk.ps1`
-aufrufen, sondern immer ueber den eigenen Wrapper, der Portrait-Lock,
-Keep-Screen-On und den Predictive-Back-Handler nachpatcht (apk-builder
-unterstuetzt nichts davon nativ, und `apps\Latein-Trainer` wird bei jedem
-`-Force`-Lauf komplett neu generiert):
+aufrufen, sondern immer ueber den eigenen Wrapper, der Portrait-Lock und
+Keep-Screen-On nachpatcht (apk-builder unterstuetzt beides nicht nativ,
+und `apps\Latein-Trainer` wird bei jedem `-Force`-Lauf komplett neu
+generiert). Die Zurueck-Wischgeste (Predictive Back) bringt seit
+2026-09-24 apk-builders WebView-Template selbst mit, dafuer muss
+`build.ps1` nichts mehr patchen:
 
 ```powershell
 .\build.ps1                              # Debug-APK
